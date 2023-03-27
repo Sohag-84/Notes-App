@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:note_app/providers/notes_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'pages/home_page.dart';
 
@@ -16,13 +18,18 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       builder: (context, child) {
-        return MaterialApp(
-          title: 'Flutter Demo',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => NotesProvider()),
+          ],
+          child: MaterialApp(
+            title: 'Flutter Demo',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            home: const HomePage(),
           ),
-          home: const HomePage(),
         );
       },
     );
