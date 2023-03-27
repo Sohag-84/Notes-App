@@ -8,7 +8,10 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class AddNewNote extends StatefulWidget {
-  const AddNewNote({Key? key}) : super(key: key);
+  final bool isUpdate;
+  final NoteModel? noteModel;
+  const AddNewNote({Key? key, required this.isUpdate, this.noteModel})
+      : super(key: key);
 
   @override
   State<AddNewNote> createState() => _AddNewNoteState();
@@ -30,6 +33,23 @@ class _AddNewNoteState extends State<AddNewNote> {
     Navigator.pop(context);
   }
 
+  void updateNote() {
+    widget.noteModel!.title = titleController.text;
+    widget.noteModel!.content = contentController.text;
+    Provider.of<NotesProvider>(context, listen: false)
+        .updateNote(widget.noteModel!);
+    Navigator.pop(context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isUpdate) {
+      titleController.text = widget.noteModel!.title!;
+      contentController.text = widget.noteModel!.content!;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +59,13 @@ class _AddNewNoteState extends State<AddNewNote> {
             onPressed: () {
               if (titleController.text.trim().isNotEmpty &&
                   contentController.text.trim().isNotEmpty) {
-                addNote();
+                if (widget.isUpdate) {
+                  //update note
+                  updateNote();
+                } else {
+                  //add note
+                  addNote();
+                }
               } else {
                 print("Please filled all the field");
               }

@@ -25,47 +25,74 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: GridView.builder(
-          itemCount: notesProvider.notes.length,
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-          itemBuilder: (context, index) {
-            NoteModel currentNotes = notesProvider.notes[index];
-            return Container(
-              margin: EdgeInsets.all(5.w),
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(
-                  color: Colors.grey,
+        child: notesProvider.notes.isEmpty
+            ? Center(
+                child: Text(
+                  "No notes yet",
+                  style:
+                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),
                 ),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    currentNotes.title.toString(),
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
+              )
+            : GridView.builder(
+                itemCount: notesProvider.notes.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemBuilder: (context, index) {
+                  NoteModel currentNotes = notesProvider.notes[index];
+                  return InkWell(
+                    onTap: () {
+                      //update note
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          fullscreenDialog: true,
+                          builder: (context) => AddNewNote(
+                            isUpdate: true,
+                            noteModel: currentNotes,
+                          ),
+                        ),
+                      );
+                    },
+                    onDoubleTap: () {
+                      //delete note
+                      notesProvider.deleteNote(currentNotes);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(5.w),
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.r),
+                        border: Border.all(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            currentNotes.title.toString(),
+                            style: TextStyle(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 7.h),
+                          Text(
+                            currentNotes.content.toString(),
+                            style: TextStyle(
+                              fontSize: 20.sp,
+                              color: Colors.grey[700],
+                            ),
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 7.h),
-                  Text(
-                    currentNotes.content.toString(),
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      color: Colors.grey[700],
-                    ),
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -73,7 +100,7 @@ class _HomePageState extends State<HomePage> {
             context,
             CupertinoPageRoute(
               fullscreenDialog: true,
-              builder: (context) => AddNewNote(),
+              builder: (context) => AddNewNote(isUpdate: false),
             ),
           );
         },
